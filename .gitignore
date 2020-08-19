@@ -1,0 +1,6 @@
+
+*.dll
+*.pdb
+*.apk
+*\obj
+*\bin

@@ -1,0 +1,120 @@
+﻿@*Inheriting from this class is not neccessary, but when used, give access to some custom helper methods like Binding and Thickness*@
+@inherits BaseComponent
+@using XamarinRazor.Sample.ViewModels
+
+@*Add StyleSheet to page if there is one*@
+<StyleSheet Resource="style.css" Assembly="GetType().Assembly" />
+
+<TabbedPage>
+    <ContentPage Title="Page 1">
+        <ScrollView>
+            @*Set Text from ChildContent*@
+            <Label TextColor="XF.Color.Purple">Hello @ViewModel.Count</Label>
+            @*DataBinding with no custom IValueConverter.
+        Using typed property instead of magic string and provide a delegate converter,
+        eliminating the need for a custom IValueConverter class for every little binding*@
+            <BoxView BindColor="@Binding(ViewModel, vm=>vm.Count, (count)=>XF.Color.FromHsv(count, 128, 255))"></BoxView>
+            @*Templated List*@
+            <ListView ItemsSource="ViewModel.Data" HasUnevenRows="true" HeightRequest="100">
+                @*Since there are more than one property of ListView that is of DataTemplate Type,
+            select the one we need with Property attribute, else there will be an ambiguity and excepion at runtime*@
+                <DataTemplate Property="ItemTemplate">
+                    @*ViewCell with current data capture*@
+                    <ViewCellT T="string">
+                        <Label>
+                            @Array.IndexOf(ViewModel.Data.ToArray(), context). @context
+                        </Label>
+                    </ViewCellT>
+                </DataTemplate>
+            </ListView>
+            @*Templated CollectionView*@
+            <CollectionView ItemsSource="ViewModel.Data" HeightRequest="100">
+                @*DataTemplate with current data capture.
+            Xamarin DataTemplate's LoadTemplate doesnt provide the current object being templated.
+            We add support for this, so ui logic can be dependent on the current object*@
+                <DataTemplateT T="string" Property="ItemTemplate">
+                    <Label>
+                        @Array.IndexOf(ViewModel.Data.ToArray(), context). @context
+                    </Label>
+                </DataTemplateT>
+            </CollectionView>
+            <AbsoluteLayout BackgroundColor="XF.Color.LightGray">
+                @*Attached Property of AbsoluteLayout on Label*@
+                <Label AbsoluteLayoutFlags="XF.AbsoluteLayoutFlags.PositionProportional"
+                       AbsoluteLayoutBounds="@(new XF.Rectangle(0, 0, XF.AbsoluteLayout.AutoSize, XF.AbsoluteLayout.AutoSize))">
+                    Absolute Left
+                </Label>
+                <Label AbsoluteLayoutFlags="XF.AbsoluteLayoutFlags.PositionProportional"
+                       AbsoluteLayoutBounds="@(new XF.Rectangle(0.5, 0, XF.AbsoluteLayout.AutoSize, XF.AbsoluteLayout.AutoSize))">
+                    Absolute Centered
+                </Label>
+                <Label AbsoluteLayoutFlags="XF.AbsoluteLayoutFlags.PositionProportional"
+                       AbsoluteLayoutBounds="@(new XF.Rectangle(1, 0, XF.AbsoluteLayout.AutoSize, XF.AbsoluteLayout.AutoSize))">
+                    Absolute Right
+                </Label>
+            </AbsoluteLayout>
+            <Grid>
+                <RowDefinition></RowDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                @*Attached Property of Grid on Label*@
+                <Label GridRow="0" GridColumn="0">Grid Column 0</Label>
+                <Label GridRow="0" GridColumn="1">Grid Column 1</Label>
+            </Grid>
+            @*Third Party Component PancakeView*@
+            <PancakeView CornerRadius="@(new XF.CornerRadius(10))"
+                         Padding="10"
+                         Margin="Thickness(10, 10)"
+                         BackgroundGradientStartPoint="@(new XF.Point(0,0))"
+                         BackgroundGradientEndPoint="@(new XF.Point(0,1))">
+                @*Target a ChildContent at a named property*@
+                <DropShadow Property="Shadow"></DropShadow>
+                @*Frameworks infer the best property of PancakeView to assign GradientStopCollection to*@
+                <GradientStopCollection>
+                    @*Multiple Collection Child are added to IList of GradientStopCollection*@
+                    <GradientStop Color="@XF.Color.FromHex("#00AEEF")" Offset="0f" />
+                    <GradientStop Color="@XF.Color.FromHex("#2CB832")" Offset="1f" />
+                </GradientStopCollection>
+                @*Thi will complain of APIKey*@
+                <!--<Map>-->
+                @*Frameworks infer the best property of Map to assign Pin to*@
+                <!--<Pin Label="Here" Position="@(new XF.Maps.Position(3.2, 6.4))"></Pin>
+        </Map>-->
+                @*Multiple Element are automatically stacked into the Content of PancakeView*@
+                <Label>I am Map Label</Label>
+                <Label>I am Stacked into PancakeView</Label>
+            </PancakeView>
+            <StackLayout HeightRequest="100">
+                <ColorWheel WidthRequest="100" HeightRequest="100" BindSelectedColor="Binding(ViewModel, vm=> vm.Color, mode: XF.BindingMode.TwoWay)" VerticalOptions="XF.LayoutOptions.FillAndExpand">
+                </ColorWheel>
+            </StackLayout>
+            @*WebView Preview*@
+            <WebView HeightRequest="80">
+                <span>WebView Count: @ViewModel.Count</span>
+                @*@if (ViewModel.Count > 2)
+                {
+                    <p>Greater than two</p>
+                }*@
+            </WebView>
+            @*Button Command converted to EventCallback OnCommand*@
+            <Button OnCommand="()=> ViewModel.Count = 0">Reset</Button>
+            <Button OnCommand="()=> ViewModel.Count++">Count</Button>
+        </ScrollView>
+    </ContentPage>
+    @if (ViewModel.Count < 2)
+    {
+        <ContentPage Title="@("Page" +  ViewModel.Count)">
+            <Label Text="Hello 2"></Label>
+        </ContentPage>
+    }
+    @if (ViewModel.Count > 5)
+    {
+        <ContentPage Title="Page 3">
+            <Label Text="Hello 3"></Label>
+        </ContentPage>
+    }
+</TabbedPage>
+
+@code{
+    HomePageViewModel ViewModel = new HomePageViewModel();
+}
