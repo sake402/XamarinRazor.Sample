@@ -14,10 +14,11 @@
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.1.0.714" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="4.6.0.847" />
     <PackageReference Include="ColorPicker.Xamarin.Forms" Version="1.2.0" />
+    <PackageReference Include="LivingThing.Core.Frameworks.XamarinRazor" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\LivingThing.Frameworks\LivingThing.Core.Frameworks.XamarinRazor\LivingThing.Core.Frameworks.XamarinRazor.csproj" />
+    <!--<ProjectReference Include="..\..\..\Libraries\LivingThing.Frameworks\LivingThing.Core.Frameworks.XamarinRazor\LivingThing.Core.Frameworks.XamarinRazor.csproj" />-->
   </ItemGroup>
 
   <ItemGroup>
